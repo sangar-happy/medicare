@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import './models/medicine.dart';
-import './widgets/medicineList.dart';
+import './widgets/medicine_list.dart';
+import './widgets/new_medicine_list_item_dialog.dart';
 
 void main(List<String> args) {
   runApp(MediCare());
@@ -13,10 +14,19 @@ class MediCare extends StatelessWidget {
   }
 }
 
-class MyHome extends StatelessWidget {
+// TODO: home screen shows only the meds which need to be taken in near future.
+// TODO: make another screen which shows all the medicines in the regimen.
+// TODO: implement reminder/ alarm
+class MyHome extends StatefulWidget {
+  @override
+  _MyHomeState createState() => _MyHomeState();
+}
+
+class _MyHomeState extends State<MyHome> {
   final List<Medicine> medicineSchedule = [
-    Medicine('yolo', 100, 'rectal', DateTime.now()),
-    Medicine('xpill', 100, 'oral', DateTime.now().subtract(Duration(days: 1))),
+    Medicine.daily('yolo', 100, 'rectal'),
+    Medicine.daily('xpill', 100, 'oral'),
+    Medicine.weekly('benedryl', 4, 'oral', DateTime.now())
   ];
 
   @override
@@ -30,7 +40,7 @@ class MyHome extends StatelessWidget {
             onPressed: () {},
           ),
         ],
-        title: Text('hi'),
+        title: Text('Home Page'),
       ),
       body: Container(
         child: Column(
@@ -40,33 +50,25 @@ class MyHome extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _newItem(context),
+        onPressed: () => _addNewMedicineDialog(context),
       ),
     );
   }
 
-  void _newItem(BuildContext context) {
+  void _addMedicine(Medicine medicine) {
+    setState(() {
+      medicineSchedule.add(medicine);
+    });
+  }
+
+  void _addNewMedicineDialog(BuildContext context) {
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
       barrierLabel: "Dialog",
       transitionDuration: Duration(milliseconds: 400),
       pageBuilder: (_, __, ___) {
-        return SizedBox.expand(
-          child: Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[
-                FlatButton(
-                  color: Colors.green,
-                  child: Text('Save'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                )
-              ],
-            ),
-          ),
-        );
+        return AddNewItemDialog(_addMedicine);
       },
     );
   }

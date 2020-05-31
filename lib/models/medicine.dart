@@ -1,11 +1,31 @@
-import 'package:flutter/foundation.dart';
+enum MedicineFrequency { daily, weekly, monthly, emergency }
 
-@immutable
 class Medicine {
-  final String medicineName;
-  final double medicineDosage;
+  final String name;
+  final double dosage;
   final String routeOfAdministration;
-  final DateTime medicineRegimen;
-  Medicine(this.medicineName, this.medicineDosage, this.routeOfAdministration,
-      this.medicineRegimen);
+  MedicineFrequency frequency;
+  DateTime time;
+  DateTime day;
+  DateTime date;
+
+  Medicine.daily(this.name, this.dosage, this.routeOfAdministration) {
+    this.frequency = MedicineFrequency.daily;
+    // TODO: set the time
+  }
+
+  Medicine.weekly(
+      this.name, this.dosage, this.routeOfAdministration, this.time) {
+    this.frequency = MedicineFrequency.weekly;
+    // TODO: set the day and time
+  }
+
+  Medicine.monthly(this.name, this.dosage, this.routeOfAdministration) {
+    this.frequency = MedicineFrequency.monthly;
+    // TODO: set the date and time
+  }
+
+  Medicine.emergency(this.name, this.dosage, this.routeOfAdministration) {
+    this.frequency = MedicineFrequency.emergency;
+  }
 }
