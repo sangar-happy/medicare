@@ -1,31 +1,32 @@
-enum MedicineFrequency { daily, weekly, monthly, emergency }
+import 'package:flutter/material.dart';
+
+enum MedicineFrequency { DAILY, WEEKLY, MONTHLY, EMERGENCY }
+enum MedicineDosageUnit { MG, ML, DROPS, CAPSULES, PUFFS }
+enum MedicineAdministrationRoute {
+  ORAL,
+  LOCAL,
+  MOUTH_INHALATION,
+  NASAL_INHALATION,
+  PARENTERAL,
+  INTRANASAL,
+  SUBLINGUAL,
+  BUCCAL,
+  SUBLABIAL
+}
 
 class Medicine {
   final String name;
-  final double dosage;
-  final String routeOfAdministration;
-  MedicineFrequency frequency;
-  DateTime time;
-  DateTime day;
-  DateTime date;
+  final double quantity;
+  final MedicineDosageUnit unit;
+  final MedicineAdministrationRoute routeOfAdministration;
+  final MedicineFrequency regimen;
+  TimeOfDay time;
 
-  Medicine.daily(this.name, this.dosage, this.routeOfAdministration) {
-    this.frequency = MedicineFrequency.daily;
-    // TODO: set the time
-  }
-
-  Medicine.weekly(
-      this.name, this.dosage, this.routeOfAdministration, this.time) {
-    this.frequency = MedicineFrequency.weekly;
-    // TODO: set the day and time
-  }
-
-  Medicine.monthly(this.name, this.dosage, this.routeOfAdministration) {
-    this.frequency = MedicineFrequency.monthly;
-    // TODO: set the date and time
-  }
-
-  Medicine.emergency(this.name, this.dosage, this.routeOfAdministration) {
-    this.frequency = MedicineFrequency.emergency;
-  }
+  Medicine(
+      {@required this.name,
+      @required this.quantity,
+      @required this.unit,
+      @required this.routeOfAdministration,
+      @required this.regimen,
+      this.time});
 }

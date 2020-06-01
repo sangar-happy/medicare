@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:mediCareApp/models/medicine.dart';
 
 class ListItem extends StatelessWidget {
@@ -46,12 +45,26 @@ class ListItem extends StatelessWidget {
               children: <Widget>[
                 DefaultTextStyle(
                   style: TextStyle(fontSize: 18, color: Colors.black),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(medicine.dosage.toString()),
-                      Text(medicine.routeOfAdministration),
-                    ],
+                  child: Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Text(medicine.quantity.toString()),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(medicine.unit
+                                .toString()
+                                .replaceFirst(RegExp(r'^\w+.'), '')),
+                          ],
+                        ),
+                        Text(medicine.routeOfAdministration
+                            .toString()
+                            .replaceFirst(RegExp(r'^\w+.'), '')),
+                      ],
+                    ),
                   ),
                 ),
                 RaisedButton(

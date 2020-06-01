@@ -24,9 +24,13 @@ class MyHome extends StatefulWidget {
 
 class _MyHomeState extends State<MyHome> {
   final List<Medicine> medicineSchedule = [
-    Medicine.daily('yolo', 100, 'rectal'),
-    Medicine.daily('xpill', 100, 'oral'),
-    Medicine.weekly('benedryl', 4, 'oral', DateTime.now())
+    Medicine(
+        name: 'xpill',
+        quantity: 1,
+        unit: MedicineDosageUnit.CAPSULES,
+        routeOfAdministration: MedicineAdministrationRoute.ORAL,
+        regimen: MedicineFrequency.DAILY,
+        time: TimeOfDay.now()),
   ];
 
   @override

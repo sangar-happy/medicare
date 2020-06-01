@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/medicine.dart';
+import './time_selector.dart';
+import './date_selector.dart';
 
 class AddNewItemDialog extends StatefulWidget {
   final Function addMedicine;
@@ -12,29 +14,12 @@ class AddNewItemDialog extends StatefulWidget {
 
 class _AddNewItemDialogState extends State<AddNewItemDialog> {
   final _nameController = TextEditingController();
-
   final _dosageController = TextEditingController();
-
-  List<String> _routeOfAdministration = [
-    'Oral',
-    'Local',
-    'Mouth inhalation',
-    'Nasal inhalation',
-    'Parenteral',
-    'Intranasal',
-    'Sublingual',
-    'Buccal',
-    'Sublabial'
-  ];
-  // List<String> _frequencyOfAdministration = [
-  //   'Daily',
-  //   'Weekly',
-  //   'Montly',
-  //   'Emergency Only'
-  // ];
-
-  String _selectedRoute;
+  MedicineAdministrationRoute _selectedRoute;
   MedicineFrequency _selectedFrequency;
+  MedicineDosageUnit _selectedUnit;
+  DateTime _selectedDate;
+  TimeOfDay _selectedTime;
 
   @override
   Widget build(BuildContext context) {
@@ -45,41 +30,60 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
             IconButton(
               icon: const Icon(Icons.save),
               onPressed: _saveMedicineInfo,
-            )
+            ),
           ],
         ),
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              SizedBox(
-                height: 15,
-              ),
               Padding(
-                padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                child: TextField(
+                padding: EdgeInsets.all(10),
+                child: TextFormField(
+                  autofocus: true,
                   decoration: const InputDecoration(
-                    prefix: Text('Medicine Name'),
+                    labelText: 'Name',
                     border: OutlineInputBorder(),
                   ),
                   controller: _nameController,
-                  onChanged: (val) {
-                    print('${_nameController.text}');
-                  },
                 ),
               ),
               Padding(
                 padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    prefix: Text('Dosage'),
-                    border: OutlineInputBorder(),
+                child: Row(children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Dosage',
+                        border: OutlineInputBorder(),
+                      ),
+                      controller: _dosageController,
+                    ),
                   ),
-                  controller: _dosageController,
-                  onChanged: (val) {
-                    print('${_dosageController.text}');
-                  },
-                ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  DropdownButton(
+                    hint: Text('Select'),
+                    value: _selectedUnit,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedUnit = newValue;
+                      });
+                    },
+                    items: MedicineDosageUnit.values.map((dosage) {
+                      return DropdownMenuItem(
+                        child: new Text(
+                          dosage
+                              .toString()
+                              .replaceFirst(RegExp(r'\w+.'), '')
+                              .toLowerCase(),
+                        ),
+                        value: dosage,
+                      );
+                    }).toList(),
+                  ),
+                ]),
               ),
               Padding(
                 padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -95,10 +99,13 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
                           _selectedRoute = newValue;
                         });
                       },
-                      items: _routeOfAdministration.map((location) {
+                      items: MedicineAdministrationRoute.values.map((route) {
                         return DropdownMenuItem(
-                          child: new Text(location),
-                          value: location,
+                          child: new Text(route
+                              .toString()
+                              .replaceFirst(RegExp(r'\w+.'), '')
+                              .toLowerCase()),
+                          value: route,
                         );
                       }).toList(),
                     ),
@@ -124,7 +131,8 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
                         return DropdownMenuItem(
                           child: new Text(frequency
                               .toString()
-                              .replaceFirst('MedicineFrequency.', '')),
+                              .replaceFirst(RegExp(r'\w+.'), '')
+                              .toLowerCase()),
                           value: frequency,
                         );
                       }).toList(),
@@ -132,18 +140,43 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
                   ],
                 ),
               ),
-              // TODO: implement time, day and date selector according to the frequency selected
+              // TODO: implement weekly, monthly and emergency cases
+              // TODO: implement day picker
               (() {
                 switch (_selectedFrequency) {
-                  case MedicineFrequency.daily:
-                    return Text('<daily logic here>');
+                  case MedicineFrequency.DAILY:
+                    return (Padding(
+                      padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text('Time'),
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          TimeSelectorRaisedButton(_selectTime, _selectedTime),
+                        ],
+                      ),
+                    ));
+
                     break;
-                  case MedicineFrequency.weekly:
-                    return Text('weekly');
+                  case MedicineFrequency.WEEKLY:
+                    return (Padding(
+                        padding:
+                            EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            DateSelectorRaisedButton(
+                                _selectDate, _selectedDate),
+                            TimeSelectorRaisedButton(
+                                _selectTime, _selectedTime),
+                          ],
+                        )));
                     break;
-                  case MedicineFrequency.monthly:
+                  case MedicineFrequency.MONTHLY:
                     break;
-                  case MedicineFrequency.emergency:
+                  case MedicineFrequency.EMERGENCY:
                     break;
                 }
                 return Text('');
@@ -155,14 +188,41 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
     );
   }
 
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != _selectedDate)
+      setState(() {
+        _selectedDate = picked;
+      });
+  }
+
+  void _selectTime(TimeOfDay picked) {
+    if (picked != null && picked != _selectedTime)
+      setState(() {
+        _selectedTime = picked;
+      });
+  }
+
   void _saveMedicineInfo() {
     if (_nameController == null ||
         _dosageController == null ||
         _selectedRoute == null ||
-        _selectedFrequency == null) {
+        _selectedFrequency == null ||
+        _selectedUnit == null ||
+        _selectedTime == null) {
+      print('yo null');
     } else {
-      var medicine = Medicine.daily(_nameController.text,
-          double.parse(_dosageController.text), _selectedRoute);
+      var medicine = Medicine(
+          name: _nameController.text,
+          quantity: double.parse(_dosageController.text),
+          unit: _selectedUnit,
+          routeOfAdministration: _selectedRoute,
+          regimen: _selectedFrequency,
+          time: _selectedTime);
       widget.addMedicine(medicine);
       Navigator.of(context).pop();
     }
