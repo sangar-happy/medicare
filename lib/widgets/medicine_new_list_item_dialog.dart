@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/medicine.dart';
-import './time_selector.dart';
-import './date_selector.dart';
+import './show_time_picker.dart';
+import './show_date_picker.dart';
 
 class AddNewItemDialog extends StatefulWidget {
   final Function addMedicine;

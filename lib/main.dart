@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './models/medicine.dart';
 import './widgets/medicine_list.dart';
-import './widgets/new_medicine_list_item_dialog.dart';
+import './widgets/medicine_new_list_item_dialog.dart';
 
 void main(List<String> args) {
   runApp(MediCare());
