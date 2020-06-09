@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import '../widgets/medicine_list_item.dart';
+import '../widgets/medicine_card.dart';
 
 import '../models/medicine.dart';
 
 class MedicineList extends StatefulWidget {
   final List<Medicine> schedule;
+  final Function removeMedicine;
 
-  MedicineList(this.schedule);
+  MedicineList(this.schedule, this.removeMedicine);
 
   @override
   _MedicineListState createState() => _MedicineListState();
@@ -21,7 +22,7 @@ class _MedicineListState extends State<MedicineList> {
         shrinkWrap: true,
         itemCount: widget.schedule.length,
         itemBuilder: (context, index) {
-          return ListItem(widget.schedule[index]);
+          return MedicineCard(widget.schedule[index], widget.removeMedicine);
         },
       ),
     );

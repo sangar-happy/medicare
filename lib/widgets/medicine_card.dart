@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mediCareApp/models/medicine.dart';
 
-class ListItem extends StatelessWidget {
-  Medicine medicine;
+class MedicineCard extends StatelessWidget {
+  final Medicine medicine;
+  final Function removeMedicine;
 
-  ListItem(this.medicine);
+  MedicineCard(this.medicine, this.removeMedicine);
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Theme.of(context).accentColor,
       child: Column(
         children: <Widget>[
           Row(
@@ -29,11 +31,10 @@ class ListItem extends StatelessWidget {
                 flex: 1,
                 child: IconButton(
                   icon: const Icon(
-                    Icons.delete,
-                    color: Colors.red,
+                    Icons.delete_forever,
                     size: 24.0,
                   ),
-                  onPressed: () {},
+                  onPressed: () => _deleteMedicine(context),
                 ),
               )
             ],
@@ -67,15 +68,31 @@ class ListItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                RaisedButton(
-                  // TODO: implement logic to remove medicine if taken
-                  child: Text('Taken'), onPressed: () {},
-                ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _deleteMedicine(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete ${medicine.name}?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Approve'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                removeMedicine(medicine.name);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-enum MedicineFrequency { DAILY, WEEKLY, MONTHLY, EMERGENCY }
-enum MedicineDosageUnit { MG, ML, DROPS, CAPSULES, PUFFS }
+enum MedicineFrequency { Daily, Weekly, Monthly, Emergency }
+enum MedicineDosageUnit { Mg, Ml, Drops, Capsules, Puffs }
 enum MedicineAdministrationRoute {
-  ORAL,
-  LOCAL,
-  MOUTH_INHALATION,
-  NASAL_INHALATION,
-  PARENTERAL,
-  INTRANASAL,
-  SUBLINGUAL,
-  BUCCAL,
-  SUBLABIAL
+  Oral,
+  Local,
+  Mouth_Inhalation,
+  Nasal_Inhalation,
+  Parenteral,
+  Intranasal,
+  Sublingual,
+  Buccal,
+  Sublabial
 }
 
 class Medicine {
@@ -20,7 +20,7 @@ class Medicine {
   final MedicineDosageUnit unit;
   final MedicineAdministrationRoute routeOfAdministration;
   final MedicineFrequency regimen;
-  TimeOfDay time;
+  final TimeOfDay time;
 
   Medicine(
       {@required this.name,

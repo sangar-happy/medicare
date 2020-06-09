@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import '../models/medicine.dart';
-import './show_time_picker.dart';
-import './show_date_picker.dart';
+import '../widgets/show_time_picker.dart';
+import '../widgets/show_date_picker.dart';
 
-class AddNewItemDialog extends StatefulWidget {
-  final Function addMedicine;
-
-  AddNewItemDialog(this.addMedicine);
-
+class AddNewMedicine extends StatefulWidget {
+  static const routeName = '/addNewMedicine';
   @override
-  _AddNewItemDialogState createState() => _AddNewItemDialogState();
+  _AddNewMedicineState createState() => _AddNewMedicineState();
 }
 
-class _AddNewItemDialogState extends State<AddNewItemDialog> {
+class _AddNewMedicineState extends State<AddNewMedicine> {
   final _nameController = TextEditingController();
   final _dosageController = TextEditingController();
   MedicineAdministrationRoute _selectedRoute;
@@ -23,13 +20,17 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final AddNewMedicineScreenArguments args =
+        ModalRoute.of(context).settings.arguments;
+
     return SizedBox.expand(
       child: Scaffold(
         appBar: AppBar(
+          title: Text('Medicine Details'),
           actions: <Widget>[
             IconButton(
               icon: const Icon(Icons.save),
-              onPressed: _saveMedicineInfo,
+              onPressed: () => _saveMedicineInfo(args.addMedicine),
             ),
           ],
         ),
@@ -72,13 +73,18 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
                       });
                     },
                     items: MedicineDosageUnit.values.map((dosage) {
+                      // TODO: don't return plural unit for dosage value <= 1
                       return DropdownMenuItem(
-                        child: new Text(
-                          dosage
+                        child: new Text(() {
+                          var s = dosage
                               .toString()
-                              .replaceFirst(RegExp(r'\w+.'), '')
-                              .toLowerCase(),
-                        ),
+                              .replaceFirst(RegExp(r'\w+.'), '');
+                          return s;
+                          // else if (double.parse(_dosageController.text) <= 1)
+                          //   return s.replaceFirst(RegExp(r's$'), '');
+                          // else
+                          //   return s;
+                        }()),
                         value: dosage,
                       );
                     }).toList(),
@@ -104,7 +110,7 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
                           child: new Text(route
                               .toString()
                               .replaceFirst(RegExp(r'\w+.'), '')
-                              .toLowerCase()),
+                              .replaceFirst('_', ' ')),
                           value: route,
                         );
                       }).toList(),
@@ -131,8 +137,7 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
                         return DropdownMenuItem(
                           child: new Text(frequency
                               .toString()
-                              .replaceFirst(RegExp(r'\w+.'), '')
-                              .toLowerCase()),
+                              .replaceFirst(RegExp(r'\w+.'), '')),
                           value: frequency,
                         );
                       }).toList(),
@@ -144,7 +149,7 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
               // TODO: implement day picker
               (() {
                 switch (_selectedFrequency) {
-                  case MedicineFrequency.DAILY:
+                  case MedicineFrequency.Daily:
                     return (Padding(
                       padding: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                       child: Row(
@@ -160,7 +165,7 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
                     ));
 
                     break;
-                  case MedicineFrequency.WEEKLY:
+                  case MedicineFrequency.Weekly:
                     return (Padding(
                         padding:
                             EdgeInsets.only(left: 10, right: 10, bottom: 10),
@@ -174,9 +179,9 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
                           ],
                         )));
                     break;
-                  case MedicineFrequency.MONTHLY:
+                  case MedicineFrequency.Monthly:
                     break;
-                  case MedicineFrequency.EMERGENCY:
+                  case MedicineFrequency.Emergency:
                     break;
                 }
                 return Text('');
@@ -207,7 +212,7 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
       });
   }
 
-  void _saveMedicineInfo() {
+  void _saveMedicineInfo(Function addMedicine) {
     if (_nameController == null ||
         _dosageController == null ||
         _selectedRoute == null ||
@@ -223,8 +228,14 @@ class _AddNewItemDialogState extends State<AddNewItemDialog> {
           routeOfAdministration: _selectedRoute,
           regimen: _selectedFrequency,
           time: _selectedTime);
-      widget.addMedicine(medicine);
+      addMedicine(medicine);
       Navigator.of(context).pop();
     }
   }
+}
+
+class AddNewMedicineScreenArguments {
+  final Function addMedicine;
+
+  AddNewMedicineScreenArguments(this.addMedicine);
 }

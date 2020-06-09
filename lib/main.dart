@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import './models/medicine.dart';
-import './widgets/medicine_list.dart';
-import './widgets/medicine_new_list_item_dialog.dart';
+import 'package:mediCareApp/screens/add_new_medicine_screen.dart';
+import './screens/home_page_screen.dart';
 
 void main(List<String> args) {
   runApp(MediCare());
@@ -10,70 +9,21 @@ void main(List<String> args) {
 class MediCare extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: MyHome());
+    return MaterialApp(
+      initialRoute: HomePage.routeName,
+      routes: {
+        HomePage.routeName: (context) => HomePage(),
+        AddNewMedicine.routeName: (context) => AddNewMedicine(),
+      },
+      theme: ThemeData(
+        primarySwatch: Colors.orange,
+        accentColor: Colors.amber,
+        canvasColor: Color.fromRGBO(255, 254, 210, 1),
+      ),
+    );
   }
 }
 
 // TODO: home screen shows only the meds which need to be taken in near future.
 // TODO: make another screen which shows all the medicines in the regimen.
 // TODO: implement reminder/ alarm
-class MyHome extends StatefulWidget {
-  @override
-  _MyHomeState createState() => _MyHomeState();
-}
-
-class _MyHomeState extends State<MyHome> {
-  final List<Medicine> medicineSchedule = [
-    Medicine(
-        name: 'xpill',
-        quantity: 1,
-        unit: MedicineDosageUnit.CAPSULES,
-        routeOfAdministration: MedicineAdministrationRoute.ORAL,
-        regimen: MedicineFrequency.DAILY,
-        time: TimeOfDay.now()),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.list),
-            tooltip: 'Show Snackbar',
-            onPressed: () {},
-          ),
-        ],
-        title: Text('Home Page'),
-      ),
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            MedicineList(medicineSchedule),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _addNewMedicineDialog(context),
-      ),
-    );
-  }
-
-  void _addMedicine(Medicine medicine) {
-    setState(() {
-      medicineSchedule.add(medicine);
-    });
-  }
-
-  void _addNewMedicineDialog(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: false,
-      barrierLabel: "Dialog",
-      transitionDuration: Duration(milliseconds: 400),
-      pageBuilder: (_, __, ___) {
-        return AddNewItemDialog(_addMedicine);
-      },
-    );
-  }
-}
